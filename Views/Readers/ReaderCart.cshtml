@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+@model LibrarySystemManagement.Models.BorrowedBooksViewModel
+@{
+    ViewData["Title"] = "Libray cart";
+}
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <a asp-controller="BorrowingBooks" asp-action="BorrowBooksForm" asp-route-id="@Model.ReaderId" class="btn btn-outline-primary">Borrow a book</a>
+    <h2 class="text-center mb-4">Borrowed books</h2>
+    <table class="table text-center" style="background-color: #f2f2f2;">
+        <tr>
+            <th></th>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Author</th>
+            <th scope="col">Year</th>
+            <th scope="col">Category</th>
+            <th scope="col">Date borrowed</th>
+            <th scope="col">Return date</th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tbody>
+            @foreach (var book in Model.BorrowedBooks)
+            {
+                <tr>
+                    <td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.ID</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Title</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Author</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Year</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Category</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.BorrowDate </td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.ReturnDate</td>
+                    <form asp-controller="BorrowingBooks" asp-action="DeleteBorrowingBook" asp-route-readerId="@Model.ReaderId" asp-route-bookId="@book.ID" method="post">
+                    <td><button type="submit" class="btn btn-outline-danger btn-sm" style=" font-size: 14px; ">Return a book</button></td>
+                    </form>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>
+

@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+@model List<LibrarySystemManagement.Models.BookBorrowedByReader>
+@{
+    ViewData["Title"] = "List of borrowing books";
+}
+
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <h2 class="text-center mb-4">List of borrowing books</h2>
+    <table class="table text-center" style="background-color: #f2f2f2;">
+        <tr>
+            <th></th>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Borrow date</th>
+            <th scope="col">Return date</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tbody>
+            @foreach (var borrowedBook in Model)
+            {
+                <tr>
+                    <td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.ID</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.Title</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.Name</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.Email</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.BorrowDate</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.ReturnDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

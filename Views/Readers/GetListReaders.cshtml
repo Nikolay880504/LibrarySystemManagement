@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+@model List<LibrarySystemManagement.Models.Reader>
+@{
+    ViewData["Title"] = "List of readers";
+}
+
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <a asp-controller="Readers" asp-action="ReaderForm" class="btn btn-outline-primary">Add Reader</a>
+    <h2 class="text-center mb-4">List of readers</h2>
+    <table class="table text-center" style="background-color: #f2f2f2;">
+        <tr>
+            <th></th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Registration date</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tbody>
+            @foreach (var reader in Model)
+            {
+                <tr>
+                    <td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@reader.ID</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@reader.Name</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@reader.Email</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@reader.RegistrationDate</td>
+                    <td></td>
+                    <td></td>
+                    <form asp-controller="Readers" asp-action="DeleteReader" asp-route-id="@reader.ID" method="post">
+                    <td><button type="submit" class="btn btn-outline-danger btn-sm" style=" font-size: 14px; ">Delete Reader</button></td>
+                    </form>
+                    <td>
+                        <a asp-controller="Readers" asp-action="ReaderForm" asp-route-id="@reader.ID" class="btn btn-outline-primary btn-sm" style="font-size: 14px;">Update reader</a>
+                    </td>
+                    <td>
+                        <a asp-controller="Readers" asp-action="ReaderCart" asp-route-id="@reader.ID" class="btn btn-outline-primary btn-sm" style="font-size: 14px;">Library card</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>
+
+
