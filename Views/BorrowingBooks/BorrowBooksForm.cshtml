@@ -8,17 +8,15 @@
     <title>@ViewData["Title"]</title>
 </head>
 <body>
-   
+
     <h2 class="text-center mb-4">List of free books</h2>
     <table class="table text-center" style="background-color: #f2f2f2;">
         <tr>
-            <th></th>
             <th scope="col">ID</th>
             <th scope="col">Title</th>
             <th scope="col">Author</th>
-            <th scope="col">Year</th>
             <th scope="col">Category</th>
-            <th></th>
+            <th scope="col">Status</th>
             <th></th>
             <th></th>
             <th></th>
@@ -27,17 +25,15 @@
             @foreach (var book in Model.Books)
             {
                 <tr>
-                    <td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.ID</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Id</td>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Title</td>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Author</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Year</td>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Category</td>
-                    <td></td>
-                    <td></td>
-                    <form asp-controller="BorrowingBooks" asp-action="RentBookUserById" asp-route-bookId="@book.ID" asp-route-readerId="@Model.ReaderId" method="post">
-                    <td><button type="submit" class="btn btn-outline-danger btn-sm" style=" font-size: 14px; ">Lend a book</button></td>
-                    </form>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">                       
+                            <td></td>
+                             <form asp-controller="BorrowingBooks" asp-action="RentBookUserById" asp-route-bookId="@book.Id" asp-route-readerId="@Model.ReaderId" method="post">
+                               <td><button type="submit" class="btn btn-outline-success btn-sm" style=" font-size: 14px;">Lend the book</button></td>
+                             </form>                      
                 </tr>
             }
         </tbody>

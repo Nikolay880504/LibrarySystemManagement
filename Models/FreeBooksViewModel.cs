@@ -2,7 +2,7 @@
 {
     public class FreeBooksViewModel
     {
-        public List<Book> Books { get; set; }
+        public List<BookListViewModel> Books { get; set; }
         public int ReaderId { get; set; }
     }
 }

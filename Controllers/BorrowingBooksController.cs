@@ -27,24 +27,32 @@ namespace LibrarySystemManagement.Controllers
         [HttpPost("borrowBook/delete/book/{bookId}/reader/{readerId}")]
         public IActionResult DeleteBorrowingBook(int bookId, int readerId)
         {
-            _borrowingRepository.Delete(bookId);      
+            _borrowingRepository.Delete(bookId);
             return RedirectToAction("ReaderCart", "Readers", new { id = readerId });
         }
 
         [HttpGet("borrow_book/{id}")]
         public IActionResult BorrowBooksForm(int id)
         {
-            var borowingViewModel = new FreeBooksViewModel
+            var books = _bookRepository.GetAllBooks().ToList();
+            var borrowingViewModel = new FreeBooksViewModel
             {
                 ReaderId = id,
-                Books = _bookRepository.GetAllBooks().ToList(),
+                Books = books
             };
-            return View(borowingViewModel);
+            return View(borrowingViewModel);
         }
 
         [HttpPost("book/{bookId}/reader/{readerId}")]
         public IActionResult RentBookUserById(int bookId, int readerId)
         {
+            var book = _bookRepository.Get(bookId);
+            if (book == null)
+            {
+                ModelState.AddModelError("", "Book not found.");
+                return RedirectToAction("BorrowBooksForm", new { id = readerId });
+            }
+
             var borrowingBook = new BorrowingBook
             {
                 BookID = bookId,
@@ -52,8 +60,11 @@ namespace LibrarySystemManagement.Controllers
                 BorrowDate = DateTime.Now,
                 ReturnDate = DateTime.Now.AddMonths(1)
             };
+
             _borrowingRepository.Add(borrowingBook);
+
             return RedirectToAction("ReaderCart", "Readers", new { id = readerId });
         }
     }
 }
+

@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+@model List<LibrarySystemManagement.Models.Category>
+@{
+    ViewData["Title"] = "List of categories";
+}
+
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <a asp-controller="Categories" asp-action="CategoryForm" class="btn btn-outline-primary">Add Category</a>
+    <h2 class="text-center mb-4">List of categories</h2>
+    <table class="table text-center" style="background-color: #f2f2f2;">
+        <tr>
+            <th></th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@category.Id</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@category.Name</td>
+                    <td></td>
+                    <td></td>
+                    <form asp-controller="Categories" asp-action="DeleteCategory" asp-route-id="@category.Id" method="post">
+                    <td><button type="submit" class="btn btn-outline-danger btn-sm" style=" font-size: 14px; ">Delete category</button></td>
+                    </form>
+                    <td>
+                        <a asp-controller="Categories" asp-action="CategoryForm" asp-route-id="@category.Id" class="btn btn-outline-primary btn-sm" style="font-size: 14px;">Update category</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

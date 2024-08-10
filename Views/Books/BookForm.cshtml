@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-@model LibrarySystemManagement.Models.Book
+@model LibrarySystemManagement.Models.BookFormViewModelWithCategories
 @{
     ViewData["Title"] = "AddBook";
 }
@@ -8,7 +8,8 @@
     <title>@ViewData["Title"]</title>
 </head>
 <body>
-    @if (Model != null && Model.ID > 0)
+
+    @if (Model.Form != null && Model.Form.Id > 0)
     {
         <h2 style="text-align: right;">Update the book</h2>
     }
@@ -21,7 +22,7 @@
     <div style="text-align: right;">
 
 
-        <form asp-controller="Books" asp-action="@((Model != null && Model.ID > 0) ? "UpdateBook" : "AddBook")"method="post">
+        <form asp-controller="Books" asp-action="@((Model.Form != null && Model.Form.Id > 0) ? "UpdateBook" : "AddBook")" method="post">
             <style>
                 .validation-error {
                     color: red;
@@ -29,33 +30,29 @@
             </style>
 
             <div style="margin-bottom: 10px;">
-                <label asp-for="Title"></label>
-                <input asp-for="Title" />
+                <label asp-for="Form.Title"></label>
+                <input asp-for="Form.Title" />
                 <br />
-                <span asp-validation-for="Title" class="validation-error"></span>
+                <span asp-validation-for="Form.Title" class="validation-error"></span>
             </div>
             <div style="margin-bottom: 10px;">
-                <label asp-for="Author"></label>
-                <input asp-for="Author" />
+                <label asp-for="Form.Author"></label>
+                <input asp-for="Form.Author" />
                 <br />
-                <span asp-validation-for="Author" class="validation-error"></span>
+                <span asp-validation-for="Form.Author" class="validation-error"></span>
             </div>
             <div style="margin-bottom: 10px;">
-                <label asp-for="Year"></label>
-                <input asp-for="Year" />
+                <label asp-for="Form.CategoryId">Category</label>
+                <select asp-for="Form.CategoryId" asp-items="Model.Categories"
+                        style="width: 190px; height: 30px; overflow: auto;">
+                    <option value="">Select a category</option>
+                </select>
                 <br />
-                <span asp-validation-for="Year" class="validation-error"></span>
+                <span asp-validation-for="Form.CategoryId" class="validation-error"></span>
             </div>
-            <div style="margin-bottom: 10px;">
-                <label asp-for="Category"></label>
-                <input asp-for="Category" />
-                <br />
-                <span asp-validation-for="Category" class="validation-error"></span>
-            </div>
-
-            @if (Model != null && Model.ID > 0)
+            @if (Model.Form != null && Model.Form.Id > 0)
             {
-                <input asp-for="ID" type="hidden" />
+                <input asp-for="Form.Id" type="hidden" />
                 <button class="btn btn-outline-primary" type="submit">Update</button>
             }
             else

@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+@model LibrarySystemManagement.Models.Category
+@{
+    ViewData["Title"] = "AddBook";
+}
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    @if (Model != null && Model.Id > 0)
+    {
+        <h2 style="text-align: right;">Update the category</h2>
+    }
+
+    else
+    {
+        <h2 style="text-align: right;">Add a new category</h2>
+    }
+
+    <div style="text-align: right;">
+
+
+        <form asp-controller="Categories" asp-action="@((Model != null && Model.Id > 0) ? "UpdateCategory" : "AddCategory")" method="post">
+            <style>
+                .validation-error {
+                    color: red;
+                }
+            </style>
+
+            <div style="margin-bottom: 10px;">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" />
+                <br />
+                <span asp-validation-for="Name" class="validation-error"></span>
+            </div>
+          
+
+            @if (Model != null && Model.Id > 0)
+            {
+                <input asp-for="Id" type="hidden" />
+                <button class="btn btn-outline-primary" type="submit">Update</button>
+            }
+            else
+            {
+                <button class="btn btn-outline-primary" type="submit">Save</button>
+            }
+
+        </form>
+
+    </div>
+</body>
+</html>

@@ -1,6 +1,8 @@
 ﻿using LibrarySystemManagement.Data;
 using LibrarySystemManagement.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net;
 
 namespace LibrarySystemManagement.Controllers
 {
@@ -8,66 +10,102 @@ namespace LibrarySystemManagement.Controllers
     public class BooksController : Controller
     {
         private readonly IBookRepository _bookRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public BooksController(IBookRepository bookRepository)
+        public BooksController(IBookRepository bookRepository, ICategoryRepository categoryRepository)
         {
             _bookRepository = bookRepository;
+            _categoryRepository = categoryRepository;
         }
 
         [HttpGet("listBooks")]
         public IActionResult GetListBooks()
         {
-            IEnumerable<Book> listBooks = _bookRepository.GetAllBooks();
+            var listBooks = _bookRepository.GetAllBooks();
+
             return View(listBooks);
         }
 
         [HttpGet("book/form/{id?}")]
-        public IActionResult BookForm(int id)
+        public IActionResult BookForm(int? id)
         {
-            if(id > 0)
+            var listCategories = _categoryRepository.GetAllCategories();
+            var viewModel = new BookFormViewModelWithCategories()
             {
-                var book = _bookRepository.Get(id);
-                return View(book);
-            }
-                return View();
-        }
+                Categories = new SelectList(listCategories, "Id", "Name")
+            };
 
-        [HttpPost("newBook")]
-        public IActionResult AddBook(Book book)
-        {
+            if (id.HasValue)
             {
-                if (ModelState.IsValid)
+                var book = _bookRepository.Get(id.Value);
+                if (book != null)
                 {
-                    _bookRepository.Add(book);
-                    return RedirectToAction("GetListBooks");
+                    viewModel.Form = new BookFormViewModel
+                    {
+                        Id = book.Id,
+                        Title = book.Title,
+                        Author = book.Author,
+                        CategoryId = book.CategoryId
+                    };
                 }
-                return View("BookForm", book);
             }
+
+            return View(viewModel);
         }
 
-        [HttpPost("books/delete/{id}")]
+        [HttpPost("book/new")]
+        public IActionResult AddBook(BookFormViewModel form)
+        {
+            if (ModelState.IsValid)
+            {
+                var book = new Book()
+                {
+                    Author = form.Author,
+                    Title = form.Title,
+                    CategoryId = form.CategoryId
+                };
+                _bookRepository.Add(book);
+                return RedirectToAction("GetListBooks");
+            }
+            var listCategories = _categoryRepository.GetAllCategories();
+            var viewModel = new BookFormViewModelWithCategories
+            {
+                Form = form,
+                Categories = new SelectList(listCategories, "Id", "Name")
+            };
+            return View("BookForm", viewModel);
+        }
+
+
+
+        [HttpPost("book/delete/{id}")]
         public IActionResult DeleteBook(int id)
-        {          
-            _bookRepository.Delete(id); 
+        {
+            _bookRepository.Delete(id);
             return RedirectToAction("GetListBooks");
         }
 
-        [HttpPost("books/update")]
-        public IActionResult UpdateBook(Book book)
+        [HttpPost("book/update")]
+        public IActionResult UpdateBook(BookFormViewModel form)
         {
             if (!ModelState.IsValid)
             {
-                return View("BookForm", book);
+                var listCategories = _categoryRepository.GetAllCategories();
+                var viewModel = new BookFormViewModelWithCategories
+                {
+                    Form = form,
+                    Categories = new SelectList(listCategories, "Id", "Name")
+                };
+                return View("BookForm", viewModel);
             }
-            var bookForUpdate = _bookRepository.Get(book.ID);
+
+            var bookForUpdate = _bookRepository.Get(form.Id);
             if (bookForUpdate != null)
             {
-                bookForUpdate.ID = book.ID;
-                bookForUpdate.Author = book.Author;
-                bookForUpdate.Title = book.Title;
-                bookForUpdate.Year = book.Year;
-                bookForUpdate.Category = book.Category;
-                _bookRepository.Update(bookForUpdate);              
+                bookForUpdate.Author = form.Author;
+                bookForUpdate.Title = form.Title;
+                bookForUpdate.CategoryId = form.CategoryId;
+                _bookRepository.Update(bookForUpdate);
             }
             return RedirectToAction("GetListBooks");
         }

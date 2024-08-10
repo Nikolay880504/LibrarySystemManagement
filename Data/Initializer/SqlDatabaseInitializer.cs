@@ -56,29 +56,44 @@ namespace LibrarySystemManagement.Data.Initializer
         }
         private string GetTabelesQuery()
         {
-            return @"CREATE TABLE Book (
-                                    ID INT IDENTITY(1,1) PRIMARY KEY,
+            return @" CREATE TABLE  Category (
+                                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                                    Name NVARCHAR(50) NOT NULL
+                                    );
+
+                                    CREATE TABLE Book (
+                                    Id INT IDENTITY(1,1) PRIMARY KEY,
                                     Title NVARCHAR(255),
                                     Author NVARCHAR(255),
+                                    CategoryId INT,
+                                    FOREIGN KEY (CategoryId) REFERENCES Category(Id)
+                                    );
+                                    
+                                    CREATE TABLE BookInstance (
+                                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                                    BookId INT,
+                                    SerialNumber NVARCHAR(15),
                                     Year INT,
-                                    Category NVARCHAR(255)
+                                    IsAvailable  BIT NOT NULL,
+                                    FOREIGN KEY (BookId) REFERENCES Book(Id) ON DELETE CASCADE
                                     );
 
                                     CREATE TABLE Reader (
-                                    ID INT IDENTITY(1,1) PRIMARY KEY,
+                                    Id INT IDENTITY(1,1) PRIMARY KEY,
                                     Name NVARCHAR(255),
                                     Email NVARCHAR(255),
                                     RegistrationDate DATETIME
                                     );
 
                                     CREATE TABLE Borrowing (
-                                    ID INT IDENTITY(1,1) PRIMARY KEY,
-                                    BookID INT,
-                                    ReaderID INT,
+                                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                                    BookId INT,
+                                    ReaderId INT,
                                     BorrowDate DATETIME,
                                     ReturnDate DATETIME,
-                                    FOREIGN KEY (BookID) REFERENCES Book(ID) ON DELETE CASCADE,
-                                    FOREIGN KEY (ReaderID) REFERENCES Reader(ID) ON DELETE CASCADE
+                                    ActualReturnDate DATETIME,
+                                    FOREIGN KEY (BookId) REFERENCES BookInstance(Id),
+                                    FOREIGN KEY (ReaderId) REFERENCES Reader(Id)
                                     );
                                     ";
         }

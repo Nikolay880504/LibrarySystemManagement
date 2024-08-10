@@ -24,7 +24,7 @@ namespace LibrarySystemManagement
             
              if (connectionString != null)
              {
-                 var databaseInitializer = new SqlDatabaseInitializer(connectionString);
+                var databaseInitializer = new SqlDatabaseInitializer(connectionString);
                  databaseInitializer.InitializeDatabase();
 
                  builder.Services.AddScoped<IDatabaseConnection>
@@ -34,6 +34,8 @@ namespace LibrarySystemManagement
             builder.Services.AddScoped<IBookRepository, SqlBookRepository>();
             builder.Services.AddScoped<IReaderRepository, SqlReaderRepository>();
             builder.Services.AddScoped<IBorrowingRepository, SqlBorrowingRepository>();
+            builder.Services.AddScoped<ICategoryRepository, SqlCaregoryRepository>();
+            builder.Services.AddScoped<IBookInstanceRepository, SqlBookInctanceRepository>();
 
             var app = builder.Build();
 
@@ -56,7 +58,6 @@ namespace LibrarySystemManagement
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
             app.Run();
         }

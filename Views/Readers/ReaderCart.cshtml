@@ -8,8 +8,27 @@
     <title>@ViewData["Title"]</title>
 </head>
 <body>
-    <a asp-controller="BorrowingBooks" asp-action="BorrowBooksForm" asp-route-id="@Model.ReaderId" class="btn btn-outline-primary">Borrow a book</a>
+    <a asp-controller="BorrowingBooks" asp-action="BorrowBooksForm" asp-route-id="@Model.Reader.ID" class="btn btn-outline-primary">Borrow a book</a>
     <h2 class="text-center mb-4">Borrowed books</h2>
+    <table>
+        <tr>
+            <td style="padding-top: 3mm; padding-bottom: 2mm;">
+                Username: <strong>@Model.Reader.Name</strong>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 3mm; padding-bottom: 2mm;">
+                Email: <strong>@Model.Reader.Email</strong>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 3mm; padding-bottom: 2mm;">
+                Registration Date: <strong>@Model.Reader.RegistrationDate.ToString("d")</strong>
+            </td>
+        </tr>
+    </table>
+
+      
     <table class="table text-center" style="background-color: #f2f2f2;">
         <tr>
             <th></th>
@@ -35,7 +54,7 @@
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Category</td>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.BorrowDate </td>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.ReturnDate</td>
-                    <form asp-controller="BorrowingBooks" asp-action="DeleteBorrowingBook" asp-route-readerId="@Model.ReaderId" asp-route-bookId="@book.ID" method="post">
+                    <form asp-controller="BorrowingBooks" asp-action="DeleteBorrowingBook" asp-route-readerId="@Model.Reader.ID" asp-route-bookId="@book.ID" method="post">
                     <td><button type="submit" class="btn btn-outline-danger btn-sm" style=" font-size: 14px; ">Return a book</button></td>
                     </form>
                 </tr>

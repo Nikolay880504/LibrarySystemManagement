@@ -20,8 +20,8 @@ namespace LibrarySystemManagement.Data
 
         public IEnumerable<Reader> GetAllReaders()
         {
-            var allGetReadersQuery = "SELECT ID, Name, Email, RegistrationDate FROM Reader";
-            return _databaseConnection.Connection.Query<Reader>(allGetReadersQuery);
+            var getAllReadersQuery = "SELECT ID, Name, Email, RegistrationDate FROM Reader";
+            return _databaseConnection.Connection.Query<Reader>(getAllReadersQuery);
         }
 
         public void Delete(int id)

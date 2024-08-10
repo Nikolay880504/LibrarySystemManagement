@@ -2,7 +2,7 @@
 {
     public class BorrowedBooksViewModel
     {
-        public int ReaderId { get; set; }
+        public Reader Reader { get; set; }
         public List<BorrowedBookDetailsViewModel> BorrowedBooks { get; set; }
     }
 }

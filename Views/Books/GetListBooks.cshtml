@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-@model List<LibrarySystemManagement.Models.Book>
+@model List<LibrarySystemManagement.Models.BookListViewModel>
 @{
     ViewData["Title"] = "List of books";
 }
@@ -12,15 +12,13 @@
     <a asp-controller="Books" asp-action="BookForm" class="btn btn-outline-primary">Add Book</a>
     <h2 class="text-center mb-4">List of books</h2>
     <table class="table text-center" style="background-color: #f2f2f2;">
-        <tr>
-            <th></th>
+        <tr>           
             <th scope="col">ID</th>
             <th scope="col">Title</th>
             <th scope="col">Author</th>
-            <th scope="col">Year</th>
             <th scope="col">Category</th>
-            <th></th>
-            <th></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
             <th></th>
             <th></th>
         </tr>
@@ -28,22 +26,23 @@
             @foreach (var book in Model)
             {
                 <tr>
-                    <td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.ID</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Id</td>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Title</td>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Author</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Year</td>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Category</td>
                     <td></td>
-                    <td></td>
-                    <form asp-controller="Books" asp-action="DeleteBook" asp-route-id="@book.ID" method="post">
-                    <td><button type="submit" class="btn btn-outline-danger btn-sm" style=" font-size: 14px; ">Delete Book</button></td>
+                    <form asp-controller="Books" asp-action="DeleteBook" asp-route-id="@book.Id" method="post">
+                    <td><button type="submit" class="btn btn-outline-danger btn-sm" style="font-size: 14px;width:80px; height: 30px;">Delete</button></td>
                     </form>
                     <td>
-                        <a asp-controller="Books" asp-action="BookForm" asp-route-id="@book.ID" class="btn btn-outline-primary btn-sm" style="font-size: 14px;">Update book</a>
+                        <a asp-controller="Books" asp-action="BookForm" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm" style="font-size: 14px;width:80px; height: 30px;">Update</a>
+                    </td>
+                    <td>
+                        <a asp-controller="BookInstances" asp-action="BookInstanceForm" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm" style="font-size: 14px;width:80px; height: 30px;"> Add  </a>
                     </td>
                 </tr>
             }
+
         </tbody>
     </table>
 </body>

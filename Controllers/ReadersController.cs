@@ -21,17 +21,21 @@ namespace LibrarySystemManagement.Controllers
         [HttpGet("listReaders")]
         public IActionResult GetListReaders()
         {
-            var allReaders = _readerRepository.GetAllReaders();
+            var allReaders = _readerRepository.GetAllReaders().ToList();
             return View(allReaders);
         }
 
         [HttpGet("reader/form/{id?}")]
-        public IActionResult ReaderForm(int id)
+        public IActionResult ReaderForm(int? id)
         {
-            if (id != 0)
+            if (id.HasValue && id.Value > 0)
             {
-                var reader = _readerRepository.Get(id);
-                return View(reader);
+                var reader = _readerRepository.Get(id.Value);
+                if (reader != null)
+                {
+                    return View(reader);
+                }
+                return NotFound();
             }
             return View();
         }
@@ -39,57 +43,64 @@ namespace LibrarySystemManagement.Controllers
         [HttpPost("reader/delete/{id}")]
         public IActionResult DeleteReader(int id)
         {
-            if (id != 0)
+            if (id > 0)
             {
-                _readerRepository.Delete(id);
+                var reader = _readerRepository.Get(id);
+                if (reader != null)
+                {
+                    _readerRepository.Delete(id);
+                }
+                else
+                {
+                    return NotFound(); 
+                }
             }
             return RedirectToAction("GetListReaders");
         }
 
         [HttpPost("reader/add")]
-        public ActionResult AddReader(Reader reader)
+        public IActionResult AddReader(Reader reader)
         {
-
             if (ModelState.IsValid)
             {
                 _readerRepository.Add(reader);
                 return RedirectToAction("GetListReaders");
             }
-            return View("ReaderForm", reader);
+            return View("ReaderForm", reader); 
         }
 
         [HttpPost("reader/update")]
-        public ActionResult UpdateReader(Reader reader)
+        public IActionResult UpdateReader(Reader reader)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View("ReaderForm", reader);
+                var existingReader = _readerRepository.Get(reader.ID);
+                if (existingReader != null)
+                {
+                    existingReader.Name = reader.Name;
+                    existingReader.Email = reader.Email;
+                    existingReader.RegistrationDate = reader.RegistrationDate;
+                    _readerRepository.Update(existingReader);
+                    return RedirectToAction("GetListReaders");
+                }
+                return NotFound(); 
             }
-            var readerForUpdate = _readerRepository.Get(reader.ID);
-            if (readerForUpdate != null)
-            {
-                readerForUpdate.ID = reader.ID;
-                readerForUpdate.Name = reader.Name;
-                readerForUpdate.Email = reader.Email;
-                readerForUpdate.RegistrationDate = reader.RegistrationDate;
-                _readerRepository.Update(readerForUpdate);
-
-            }
-            return RedirectToAction("GetListReaders");
+            return View("ReaderForm", reader);
         }
 
         [HttpGet("reader/cart/{id}")]
-        public ActionResult ReaderCart(int id)
+        public IActionResult ReaderCart(int id)
         {
-            var allBooksForReader = _borrowingRepository.GetAllBorrowingBooksByReaderId(id);
-            var borrowingViewModelList = new BorrowedBooksViewModel
+            var borrowedBooks = _borrowingRepository.GetAllBorrowingBooksByReaderId(id).ToList();
+            var reader =  _readerRepository.Get(id);
+            
+            var viewModel = new BorrowedBooksViewModel
             {
-                BorrowedBooks = allBooksForReader.ToList(),
-                ReaderId = id
+                BorrowedBooks = borrowedBooks,
+                Reader = reader
             };
-            return View(borrowingViewModelList);
+            return View(viewModel);
         }
-
-
     }
 }
+

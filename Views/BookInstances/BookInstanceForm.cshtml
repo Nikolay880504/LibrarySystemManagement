@@ -1,0 +1,80 @@
+﻿@model LibrarySystemManagement.Models.BookInstanceCreationModel
+@{
+    ViewData["Title"] = "Libray cart";
+}
+<
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <style>
+        .main-container {
+            display: flex; 
+            justify-content: space-between; 
+            margin: 20px; 
+        }
+
+        .book-description {
+            width: 50%; 
+            text-align: left; 
+        }        
+        .form-container {
+            width: 50%; 
+            text-align: right; 
+        }
+        table {
+            margin-bottom: 20px; 
+        }
+        .validation-error {
+            color: red;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-button {
+            text-align: right;
+            margin-top: 20px; 
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="book-description">
+            <h3 style="margin-bottom: 20px;">Book description</h3>
+            <table>
+                <tr>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">
+                        Title: <strong>@Model.Book.Title</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">
+                        Author: <strong>@Model.Book.Author</strong>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="form-container">
+            <h3 style="margin-bottom: 20px;">Add a new instance</h3>
+            <form asp-controller="BookInstances" asp-action="AddBookInstance" method="post">
+                <div class="form-group">
+                    <label asp-for="BookInstance.SerialNumber">Serial Number</label>
+                    <input asp-for="BookInstance.SerialNumber" />
+                    <br />
+                    <span asp-validation-for="BookInstance.SerialNumber" class="validation-error"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BookInstance.Year">Year</label>
+                    <input asp-for="BookInstance.Year" />
+                    <br />
+                    <span asp-validation-for="BookInstance.Year" class="validation-error"></span>
+                </div>
+                <input asp-for="BookInstance.BookId" type="hidden" value="@Model.Book.Id" />
+                <div class="form-button">
+                    <button class="btn btn-outline-primary" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

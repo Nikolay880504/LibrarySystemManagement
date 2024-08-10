@@ -5,6 +5,7 @@ namespace LibrarySystemManagement.Data
 {
     public interface IBookRepository : IBaseRepository<Book>
     {
-        IEnumerable<Book> GetAllBooks();
+        IEnumerable<BookListViewModel> GetAllBooks();     
+        public BookFormViewModel GetBookFormViewModel(int id);
     }
 }
