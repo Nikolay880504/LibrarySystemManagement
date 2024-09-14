@@ -1,9 +1,8 @@
-﻿@model LibrarySystemManagement.Models.BookInstanceCreationModel
+﻿<!DOCTYPE html>
+@model LibrarySystemManagement.Models.BookInstances.BookInstanceCreationModel
 @{
     ViewData["Title"] = "Libray cart";
 }
-<
-<!DOCTYPE html>
 <html>
 <head>
     <title>@ViewData["Title"]</title>
@@ -13,7 +12,6 @@
             justify-content: space-between; 
             margin: 20px; 
         }
-
         .book-description {
             width: 50%; 
             text-align: left; 
@@ -34,6 +32,7 @@
         .form-button {
             text-align: right;
             margin-top: 20px; 
+        }
     </style>
 </head>
 <body>
@@ -43,19 +42,32 @@
             <table>
                 <tr>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">
-                        Title: <strong>@Model.Book.Title</strong>
+                        Title: <strong>@Model.BookViewModel.Title</strong>
                     </td>
                 </tr>
                 <tr>
                     <td style="padding-top: 3mm; padding-bottom: 2mm;">
-                        Author: <strong>@Model.Book.Author</strong>
+                        Author: <strong>@Model.BookViewModel.Author</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">
+                        Category: <strong>@Model.BookViewModel.Category</strong>
                     </td>
                 </tr>
             </table>
         </div>
         <div class="form-container">
-            <h3 style="margin-bottom: 20px;">Add a new instance</h3>
-            <form asp-controller="BookInstances" asp-action="AddBookInstance" method="post">
+            @if (Model.BookInstance != null && Model.BookInstance.Id>0)
+            {
+                <h3 style="margin-bottom: 20px;">Update the instance</h3>
+            }
+            else
+            {
+                <h3 style="margin-bottom: 20px;">Add a new instance</h3>
+            }
+           
+            <form asp-controller="BookInstances" asp-action="@((Model.BookInstance != null && Model.BookInstance.Id>0) ? "UpdateBookInstance" : "AddBookInstance")" method="post">
                 <div class="form-group">
                     <label asp-for="BookInstance.SerialNumber">Serial Number</label>
                     <input asp-for="BookInstance.SerialNumber" />
@@ -68,13 +80,24 @@
                     <br />
                     <span asp-validation-for="BookInstance.Year" class="validation-error"></span>
                 </div>
-                <input asp-for="BookInstance.BookId" type="hidden" value="@Model.Book.Id" />
+                <input asp-for="BookInstance.BookId" type="hidden" value="@Model.BookViewModel.Id" />
+                @if (Model.BookInstance != null && Model.BookInstance.Id > 0)
+                {
+                    <input asp-for="BookInstance.Id" type="hidden" value="@Model.BookInstance.Id" />
+                }
+                
                 <div class="form-button">
-                    <button class="btn btn-outline-primary" type="submit">Save</button>
+                    @if (Model.BookInstance != null && Model.BookInstance.Id > 0)
+                    {
+                        <button class="btn btn-outline-primary" type="submit">Update</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-primary" type="submit">Save</button>
+                    }                    
                 </div>
             </form>
         </div>
     </div>
-
 </body>
 </html>

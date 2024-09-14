@@ -1,5 +1,5 @@
 ﻿using LibrarySystemManagement.Data;
-using LibrarySystemManagement.Models;
+using LibrarySystemManagement.Models.Categories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibrarySystemManagement.Controllers
@@ -24,9 +24,9 @@ namespace LibrarySystemManagement.Controllers
                 {
                     return View(category);
                 }
-                return NotFound();
+                return NotFound(); 
             }
-            return View();
+            return View(); 
         }
 
         [HttpPost("category/add")]
@@ -37,7 +37,7 @@ namespace LibrarySystemManagement.Controllers
                 _categoryRepository.Add(category);
                 return RedirectToAction("GetListCategories");
             }
-            return View("CategoryForm", category); 
+            return View("CategoryForm", category);
         }
 
         [HttpPost("category/delete/{id}")]
@@ -49,13 +49,11 @@ namespace LibrarySystemManagement.Controllers
                 if (category != null)
                 {
                     _categoryRepository.Delete(id);
+                    return RedirectToAction("GetListCategories");
                 }
-                else
-                {
-                    return NotFound(); 
-                }
+                return NotFound(); 
             }
-            return RedirectToAction("GetListCategories");
+            return BadRequest(); 
         }
 
         [HttpGet]
@@ -79,8 +77,8 @@ namespace LibrarySystemManagement.Controllers
                 }
                 return NotFound(); 
             }
+
             return View("CategoryForm", category);
         }
     }
 }
-

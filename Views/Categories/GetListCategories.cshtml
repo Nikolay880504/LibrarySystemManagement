@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-@model List<LibrarySystemManagement.Models.Category>
+@model List<LibrarySystemManagement.Models.Categories.Category>
 @{
     ViewData["Title"] = "List of categories";
 }
@@ -7,39 +7,78 @@
 <html>
 <head>
     <title>@ViewData["Title"]</title>
+    <style>
+        .main-container {
+            margin: 20px;
+        }
+
+        .table-container {
+            max-height: 400px; 
+            overflow-y: auto; 
+            background-color: #f2f2f2; 
+            border: 1px solid #ddd; 
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .table th, .table td {
+                padding: 10px;
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .table th {
+                background-color: #e9ecef;
+                position: sticky;
+                top: 0; 
+                z-index: 1; 
+            }
+
+            .table td {
+                padding-top: 3mm;
+                padding-bottom: 2mm;
+            }
+    </style>
 </head>
 <body>
     <a asp-controller="Categories" asp-action="CategoryForm" class="btn btn-outline-primary">Add Category</a>
     <h2 class="text-center mb-4">List of categories</h2>
-    <table class="table text-center" style="background-color: #f2f2f2;">
-        <tr>
-            <th></th>
-            <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tbody>
-            @foreach (var category in Model)
-            {
+    <div class="table-container">
+        <table class="table text-center">
+            <thead>
                 <tr>
-                    <td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@category.Id</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@category.Name</td>
-                    <td></td>
-                    <td></td>
-                    <form asp-controller="Categories" asp-action="DeleteCategory" asp-route-id="@category.Id" method="post">
-                    <td><button type="submit" class="btn btn-outline-danger btn-sm" style=" font-size: 14px; ">Delete category</button></td>
-                    </form>
-                    <td>
-                        <a asp-controller="Categories" asp-action="CategoryForm" asp-route-id="@category.Id" class="btn btn-outline-primary btn-sm" style="font-size: 14px;">Update category</a>
-                    </td>
+                    <th></th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td></td>
+                        <td>@category.Id</td>
+                        <td>@category.Name</td>
+                        <td></td>
+                        <td></td>
+                        <form asp-controller="Categories" asp-action="DeleteCategory" asp-route-id="@category.Id" method="post">
+                        <td><button type="submit" class="btn btn-outline-danger btn-sm" style="font-size: 14px;">Delete category</button></td>
+                        </form>
+                        <td>
+                            <a asp-controller="Categories" asp-action="CategoryForm" asp-route-id="@category.Id" class="btn btn-outline-primary btn-sm" style="font-size: 14px;">Update category</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

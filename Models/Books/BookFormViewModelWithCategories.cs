@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace LibrarySystemManagement.Models
+namespace LibrarySystemManagement.Models.Books
 {
     public class BookFormViewModelWithCategories
     {

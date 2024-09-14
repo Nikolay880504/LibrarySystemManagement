@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LibrarySystemManagement.Models
+namespace LibrarySystemManagement.Models.Readers
 {
     public class Reader
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         [Required(ErrorMessage = "Name is required.")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Email is required.")]

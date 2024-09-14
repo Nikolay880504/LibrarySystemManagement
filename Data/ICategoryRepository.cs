@@ -1,4 +1,4 @@
-﻿using LibrarySystemManagement.Models;
+﻿using LibrarySystemManagement.Models.Categories;
 
 namespace LibrarySystemManagement.Data
 {

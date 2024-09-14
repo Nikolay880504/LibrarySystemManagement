@@ -1,5 +1,6 @@
 ﻿using LibrarySystemManagement.Data;
-using LibrarySystemManagement.Models;
+using LibrarySystemManagement.Models.Borrowers;
+using LibrarySystemManagement.Models.Readers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibrarySystemManagement.Controllers
@@ -9,13 +10,13 @@ namespace LibrarySystemManagement.Controllers
     {
         private readonly IReaderRepository _readerRepository;
         private readonly IBorrowingRepository _borrowingRepository;
-        private readonly IBookRepository _bookRepository;
 
-        public ReadersController(IReaderRepository readerRepository, IBorrowingRepository borrowingRepository, IBookRepository bookRepository)
+        public ReadersController(
+            IReaderRepository readerRepository,
+            IBorrowingRepository borrowingRepository)
         {
             _readerRepository = readerRepository;
             _borrowingRepository = borrowingRepository;
-            _bookRepository = bookRepository;
         }
 
         [HttpGet("listReaders")]
@@ -52,7 +53,7 @@ namespace LibrarySystemManagement.Controllers
                 }
                 else
                 {
-                    return NotFound(); 
+                    return NotFound();
                 }
             }
             return RedirectToAction("GetListReaders");
@@ -66,7 +67,7 @@ namespace LibrarySystemManagement.Controllers
                 _readerRepository.Add(reader);
                 return RedirectToAction("GetListReaders");
             }
-            return View("ReaderForm", reader); 
+            return View("ReaderForm", reader);
         }
 
         [HttpPost("reader/update")]
@@ -74,7 +75,7 @@ namespace LibrarySystemManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingReader = _readerRepository.Get(reader.ID);
+                var existingReader = _readerRepository.Get(reader.Id);
                 if (existingReader != null)
                 {
                     existingReader.Name = reader.Name;
@@ -83,17 +84,17 @@ namespace LibrarySystemManagement.Controllers
                     _readerRepository.Update(existingReader);
                     return RedirectToAction("GetListReaders");
                 }
-                return NotFound(); 
+                return NotFound();
             }
             return View("ReaderForm", reader);
         }
 
         [HttpGet("reader/cart/{id}")]
         public IActionResult ReaderCart(int id)
-        {
-            var borrowedBooks = _borrowingRepository.GetAllBorrowingBooksByReaderId(id).ToList();
-            var reader =  _readerRepository.Get(id);
-            
+        { 
+            var borrowedBooks = _borrowingRepository.GetBorrowedBooksByReaderId(id).ToList();
+            var reader = _readerRepository.Get(id);
+
             var viewModel = new BorrowedBooksViewModel
             {
                 BorrowedBooks = borrowedBooks,
@@ -101,6 +102,7 @@ namespace LibrarySystemManagement.Controllers
             };
             return View(viewModel);
         }
+
+        public IActionResult GetListReadersWithOverdueBooks() { return View(); }
     }
 }
-

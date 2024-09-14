@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LibrarySystemManagement.Models
+namespace LibrarySystemManagement.Models.Books
 {
-    public class BookListViewModel
+    public class BookViewModel
     {
         public int Id { get; set; }
         public string Title { get; set; }

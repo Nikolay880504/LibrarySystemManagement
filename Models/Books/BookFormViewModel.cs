@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace LibrarySystemManagement.Models
+namespace LibrarySystemManagement.Models.Books
 {
     public class BookFormViewModel
     {

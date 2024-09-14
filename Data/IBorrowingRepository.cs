@@ -1,4 +1,4 @@
-﻿using LibrarySystemManagement.Models;
+﻿using LibrarySystemManagement.Models.Borrowers;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LibrarySystemManagement.Data
@@ -6,7 +6,7 @@ namespace LibrarySystemManagement.Data
     public interface IBorrowingRepository : IBaseRepository<BorrowingBook>
     {
       List<BookBorrowedByReader> GetAllBorrowingBooks();
-      IEnumerable<BorrowedBookDetailsViewModel> GetAllBorrowingBooksByReaderId(int readerId);
+      List<BorrowedBookDetailsViewModel> GetBorrowedBooksByReaderId(int readerId);
 
     }
 }

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-@model List<LibrarySystemManagement.Models.BookBorrowedByReader>
+@model List<LibrarySystemManagement.Models.Borrowers.BookBorrowedByReader>
 @{
     ViewData["Title"] = "List of borrowing books";
 }
@@ -7,36 +7,96 @@
 <html>
 <head>
     <title>@ViewData["Title"]</title>
+    <style>
+        .main-container {
+            margin: 20px;
+        }
+
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .table th, .table td {
+                padding: 10px;
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .table th {
+                background-color: #e9ecef;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            }
+
+            .table td {
+                padding-top: 3mm;
+                padding-bottom: 2mm;
+            }
+
+        .due {
+            color: green;
+        }
+
+        .overdue {
+            color: red;
+        }
+
+    </style>
 </head>
 <body>
     <h2 class="text-center mb-4">List of borrowing books</h2>
-    <table class="table text-center" style="background-color: #f2f2f2;">
-        <tr>
-            <th></th>
-            <th scope="col">ID</th>
-            <th scope="col">Title</th>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Borrow date</th>
-            <th scope="col">Return date</th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tbody>
-            @foreach (var borrowedBook in Model)
-            {
+    <div class="table-container">
+        <table class="table text-center">
+            <thead>
                 <tr>
-                    <td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.ID</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.Title</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.Name</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.Email</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.BorrowDate</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@borrowedBook.ReturnDate</td>
+                    <th></th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Serial number</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Borrow date</th>
+                    <th scope="col">Return date</th>
+                    <th scope="col">Return status</th>
+                    <th></th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var borrowedBook in Model)
+                {
+                    var statusClass = borrowedBook.ReturnStatus > 0 ? "due" : "overdue";
+                    var statusText = borrowedBook.ReturnStatus > 0
+                    ? $"{borrowedBook.ReturnStatus} days until due"
+                    : $"{-borrowedBook.ReturnStatus} days overdue";
+
+                    <tr>
+                        <td></td>
+                        <td>@borrowedBook.Title</td>
+                        <td>@borrowedBook.Author</td>
+                        <td>@borrowedBook.Year</td>
+                        <td>@borrowedBook.SerialNumber</td>
+                        <td>@borrowedBook.Name</td>
+                        <td>@borrowedBook.Email</td>
+                        <td>@borrowedBook.BorrowDate</td>
+                        <td>@borrowedBook.ReturnDate</td>
+                        <td class="@statusClass">@statusText</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

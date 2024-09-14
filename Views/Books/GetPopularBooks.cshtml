@@ -9,10 +9,10 @@
     <title>@ViewData["Title"]</title>
     <style>
         .table-container {
-            max-height: 500px; 
-            overflow-y: auto; 
-            background-color: #f2f2f2; 
-            border: 1px solid #ddd; 
+            max-height: 500px;
+            overflow-y: auto;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
         }
 
         .table {
@@ -29,8 +29,8 @@
             .table th {
                 background-color: #e9ecef;
                 position: sticky;
-                top: 0; 
-                z-index: 1; 
+                top: 0;
+                z-index: 1;
             }
     </style>
 </head>
@@ -62,18 +62,6 @@
                         <td>@book.Author</td>
                         <td>@book.Category</td>
                         <td></td>
-                        <form asp-controller="Books" asp-action="DeleteBook" asp-route-id="@book.Id" method="post">
-                        <td><button type="submit" class="btn btn-outline-danger btn-sm" style="font-size: 14px;width:80px; height: 30px;">Delete</button></td>
-                        </form>
-                        <td>
-                            <a asp-controller="Books" asp-action="BookForm" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm" style="font-size: 14px;width:80px; height: 30px;">Update</a>
-                        </td>
-                        <td>
-                            <a asp-controller="BookInstances" asp-action="BookInstanceForm" asp-route-bookId="@book.Id" class="btn btn-outline-primary btn-sm" style="font-size: 14px;width:80px; height: 30px;">Add</a>
-                        </td>
-                        <td>
-                            <a asp-controller="BookInstances" asp-action="GetListBookInstances" asp-route-id="@book.Id" class="btn btn-outline-primary btn-sm" style="font-size: 14px;width:80px; height: 30px;">Instances</a>
-                        </td>
                     </tr>
                 }
             </tbody>

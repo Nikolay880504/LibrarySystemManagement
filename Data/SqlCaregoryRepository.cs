@@ -1,48 +1,64 @@
 ﻿using Dapper;
 using LibrarySystemManagement.Data.Connection;
-using LibrarySystemManagement.Models;
+using LibrarySystemManagement.Models.Categories;
 
 namespace LibrarySystemManagement.Data
 {
-    public class SqlCaregoryRepository : ICategoryRepository
+    public class SqlCategoryRepository : ICategoryRepository
     {
-        readonly private IDatabaseConnection _databaseConnection;
+        private readonly IDatabaseConnection _databaseConnection;
 
-        public SqlCaregoryRepository(IDatabaseConnection databaseConnection)
+        public SqlCategoryRepository(IDatabaseConnection databaseConnection)
         {
             _databaseConnection = databaseConnection;
         }
+
         public void Add(Category model)
         {
-            var addNewCatogoryQuerry = $"INSERT INTO Category (name) VALUES (@Name)";
-            _databaseConnection.Connection.Execute(addNewCatogoryQuerry, model);
+            var addNewCategoryQuery = @"
+                INSERT INTO Category (Name) 
+                VALUES (@Name)";
+
+            _databaseConnection.Connection.Execute(addNewCategoryQuery, model);
         }
 
         public void Delete(int id)
         {
-            var deleteCategoryQuery = $"DELETE FROM Category WHERE Id = @id";
-            _databaseConnection.Connection.Execute(deleteCategoryQuery, new {Id = id});
+            var deleteCategoryQuery = @"
+                DELETE FROM Category 
+                WHERE Id = @Id";
+
+            _databaseConnection.Connection.Execute(deleteCategoryQuery, new { Id = id });
         }
 
         public Category? Get(int id)
         {
-            var getCategoryForIdQery = $"SELECT * FROM Category WHERE Id = @id";
-            
-            return _databaseConnection.Connection.QueryFirstOrDefault<Category>(getCategoryForIdQery, new {Id = id});
+            var getCategoryByIdQuery = @"
+                SELECT * FROM Category 
+                WHERE Id = @Id";
+
+            return _databaseConnection.Connection
+                .QueryFirstOrDefault<Category>(getCategoryByIdQuery, new { Id = id });
         }
 
         public IEnumerable<Category> GetAllCategories()
         {
-            var getAllCategoriesQuery = "SELECT * FROM Category";
+            var getAllCategoriesQuery = @"
+                SELECT * FROM Category";
 
-            return _databaseConnection.Connection.Query<Category>(getAllCategoriesQuery).ToList();
+            return _databaseConnection.Connection
+                .Query<Category>(getAllCategoriesQuery)
+                .ToList();
         }
 
         public void Update(Category model)
         {
-            var updateCategoryQuery = $"UPDATE  Category SET Name = @Name WHERE Id = @Id";
-            _databaseConnection.Connection.Execute(updateCategoryQuery, model);
+            var updateCategoryQuery = @"
+                UPDATE Category 
+                SET Name = @Name 
+                WHERE Id = @Id";
 
+            _databaseConnection.Connection.Execute(updateCategoryQuery, model);
         }
     }
 }

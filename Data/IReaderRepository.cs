@@ -1,4 +1,4 @@
-﻿using LibrarySystemManagement.Models;
+﻿using LibrarySystemManagement.Models.Readers;
 
 namespace LibrarySystemManagement.Data
 {

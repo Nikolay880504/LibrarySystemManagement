@@ -1,11 +1,14 @@
-﻿using LibrarySystemManagement.Models;
-
+﻿using LibrarySystemManagement.Models.Books;
 
 namespace LibrarySystemManagement.Data
 {
     public interface IBookRepository : IBaseRepository<Book>
-    {
-        IEnumerable<BookListViewModel> GetAllBooks();     
-        public BookFormViewModel GetBookFormViewModel(int id);
+    {   
+        BookViewModel GetBookById(int id);
+
+        List<BookViewModel> GetBooksWithCategories();
+
+        List<BookViewModel> GetListMostPopularBooks();
+
     }
 }

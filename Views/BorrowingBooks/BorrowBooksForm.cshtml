@@ -1,42 +1,99 @@
-﻿<!DOCTYPE html>
-@model LibrarySystemManagement.Models.FreeBooksViewModel
+﻿@model List<LibrarySystemManagement.Models.BookInstances.BookInstancesForRent>
 @{
-    ViewData["Title"] = "Libray cart";
+    ViewData["Title"] = "Library Cart";
 }
+
+<!DOCTYPE html>
 <html>
 <head>
     <title>@ViewData["Title"]</title>
 </head>
 <body>
 
-    <h2 class="text-center mb-4">List of free books</h2>
+    <h2 class="text-center mb-4">List of Books</h2>
     <table class="table text-center" style="background-color: #f2f2f2;">
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Title</th>
-            <th scope="col">Author</th>
-            <th scope="col">Category</th>
-            <th scope="col">Status</th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th scope="col">Category</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
         <tbody>
-            @foreach (var book in Model.Books)
+            @foreach (var book in Model)
             {
                 <tr>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Id</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Title</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Author</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Category</td>
-                    <td style="padding-top: 3mm; padding-bottom: 2mm;">                       
-                            <td></td>
-                             <form asp-controller="BorrowingBooks" asp-action="RentBookUserById" asp-route-bookId="@book.Id" asp-route-readerId="@Model.ReaderId" method="post">
-                               <td><button type="submit" class="btn btn-outline-success btn-sm" style=" font-size: 14px;">Lend the book</button></td>
-                             </form>                      
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Model.Title</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Model.Author</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">@book.Model.Category</td>
+                    <td style="padding-top: 3mm; padding-bottom: 2mm;">
+                        <button type="button" class="btn btn-outline-primary show-instances" data-book-id="@book.Model.Id">List Instances</button>
+                    </td>
+                </tr>
+                <tr class="instances-row" id="instances-@book.Model.Id" style="display: none;">
+                    <td colspan="4" style="padding: 0;">
+                        <div style="overflow-x: auto;">
+                            <table class="table" style="background-color: white; width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 1mm 2mm; font-size: 13px; width: 25%; vertical-align: bottom;">Serial Number</th>
+                                        <th style="padding: 1mm 2mm; font-size: 13px; width: 20%; vertical-align: bottom;">Year</th>
+                                        <th style="padding: 1mm 2mm; font-size: 13px; width: 40%; vertical-align: bottom;">Status</th>
+                                        <th style="padding: 1mm 2mm; font-size: 13px; width: 15%; vertical-align: bottom;"></th>
+                                    </tr>
+                                </thead>
+                            </table>
+
+                            <div style="max-height: 300px; overflow-y: auto;">
+                                <table class="table" style="background-color: white; width: 100%; border-collapse: collapse;">
+                                    <tbody>
+                                        @foreach (var instance in book.BookInstances)
+                                        {
+                                            <tr style="background-color: white;">
+                                                <td style="padding: 1mm 2mm; font-size: 12px; width: 25%;">@instance.SerialNumber</td>
+                                                <td style="padding: 1mm 2mm; font-size: 12px; width: 20%;">@instance.Year</td>
+                                                <td style="padding: 1mm 2mm; font-size: 12px; width: 40%; color: @(instance.IsAvailable ? "green" : "red");">
+                                                    @(instance.IsAvailable ? "Available" : "Unavailable")
+                                                </td>
+                                                <td style="padding: 1mm 2mm; vertical-align: middle; font-size: 12px; width: 15%;">
+                                                    <form asp-controller="BorrowingBooks" asp-action="RentBookInstanceUserById" asp-route-bookInstanceId="@instance.Id" asp-route-readerId="@book.ReaderId" method="post" style="margin: 0; display: flex; align-items: center;">
+                                                        <button type="submit" class="btn btn-outline-success"
+                                                                style="height: 24px; padding: 2px 5px; font-size: 10px;"
+                                                        @(instance.IsAvailable ? "" : "disabled")>
+                                                            Borrow the instance
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const buttons = document.querySelectorAll(".show-instances");
+
+            buttons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const bookId = this.getAttribute("data-book-id");
+                    const instancesRow = document.getElementById("instances-" + bookId);
+
+                    if (instancesRow.style.display === "none" || instancesRow.style.display === "") {
+                        instancesRow.style.display = "table-row";
+                    } else {
+                        instancesRow.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

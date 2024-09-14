@@ -34,7 +34,7 @@ namespace LibrarySystemManagement
             builder.Services.AddScoped<IBookRepository, SqlBookRepository>();
             builder.Services.AddScoped<IReaderRepository, SqlReaderRepository>();
             builder.Services.AddScoped<IBorrowingRepository, SqlBorrowingRepository>();
-            builder.Services.AddScoped<ICategoryRepository, SqlCaregoryRepository>();
+            builder.Services.AddScoped<ICategoryRepository, SqlCategoryRepository>();
             builder.Services.AddScoped<IBookInstanceRepository, SqlBookInctanceRepository>();
 
             var app = builder.Build();

@@ -1,12 +1,13 @@
 ﻿using Dapper;
 using LibrarySystemManagement.Data.Connection;
-using LibrarySystemManagement.Models;
+using LibrarySystemManagement.Models.Borrowers;
 
 namespace LibrarySystemManagement.Data
 {
     public class SqlBorrowingRepository : IBorrowingRepository
     {
-        private IDatabaseConnection _databaseConnection;
+        private readonly IDatabaseConnection _databaseConnection;
+
         public SqlBorrowingRepository(IDatabaseConnection databaseConnection)
         {
             _databaseConnection = databaseConnection;
@@ -14,50 +15,90 @@ namespace LibrarySystemManagement.Data
 
         public void Add(BorrowingBook model)
         {
-            var queryAddBorrowingBookById = @"INSERT INTO Borrowing (BookID, ReaderID, BorrowDate, ReturnDate) 
-                                            VALUES (@BookID, @ReaderID, @BorrowDate, @ReturnDate)";
+            var queryAddBorrowingBookById = @"
+                INSERT INTO Borrowing 
+                (BookInstanceId, ReaderID, BorrowDate, ReturnDate) 
+                VALUES 
+                (@BookInstanceId, @ReaderID, @BorrowDate, @ReturnDate)";
 
             _databaseConnection.Connection.Execute(queryAddBorrowingBookById, model);
         }
 
         public void Delete(int bookId)
         {
-            var deleteBorrowingBookById = "DELETE FROM Borrowing WHERE BookID = @bookIdToDelete";
+            var deleteBorrowingBookById = @"
+                DELETE FROM Borrowing 
+                WHERE BookInstanceId = @bookIdToDelete";
 
             _databaseConnection.Connection.Execute(deleteBorrowingBookById, new { bookIdToDelete = bookId });
         }
 
-        public BorrowingBook Get(int id)
+        public BorrowingBook? Get(int id)
         {
-            throw new NotImplementedException();
+            var getBorrowingBookForIdQuery = @"
+                SELECT * FROM Borrowing 
+                WHERE BookInstanceId = @id";
+
+            return _databaseConnection.Connection
+                .QueryFirstOrDefault<BorrowingBook>(getBorrowingBookForIdQuery, new { id });
         }
 
         public List<BookBorrowedByReader> GetAllBorrowingBooks()
         {
-            string getAllBorrowedBooks = @"SELECT Book.ID, Book.Title, Reader.Name, Reader.Email, Borrowing.BorrowDate, Borrowing.ReturnDate
-                                        FROM Borrowing
-                                        JOIN Book ON Borrowing.BookID = Book.ID
-                                        JOIN Reader ON Borrowing.ReaderID = Reader.ID";
+            var getAllBorrowedBooks = @"
+                SELECT 
+                    Book.Title, 
+                    Book.Author,
+                    BookInstance.Year,
+                    BookInstance.SerialNumber, 
+                    Reader.Name, 
+                    Reader.Email, 
+                    Borrowing.BorrowDate, 
+                    Borrowing.ReturnDate,
+                    DATEDIFF(day, GETDATE(), Borrowing.ReturnDate) AS ReturnStatus 
+                FROM Borrowing
+                JOIN BookInstance ON Borrowing.BookInstanceId = BookInstance.Id
+                JOIN Book ON Book.Id = BookInstance.BookId
+                JOIN Reader ON Borrowing.ReaderID = Reader.ID
+                WHERE Borrowing.ActualReturnDate IS NULL";
 
-            return _databaseConnection.Connection.Query<BookBorrowedByReader>(getAllBorrowedBooks).ToList();
+            return _databaseConnection.Connection
+                .Query<BookBorrowedByReader>(getAllBorrowedBooks)
+                .ToList();
         }
 
-        public IEnumerable<BorrowedBookDetailsViewModel> GetAllBorrowingBooksByReaderId(int readerId)
+        public List<BorrowedBookDetailsViewModel> GetBorrowedBooksByReaderId(int readerId)
         {
-            string booksForReaderIdQuery = @"SELECT Book.Id, Book.Title, Book.Year, Book.Author, Category.Name AS Category, Borrowing.BorrowDate, Borrowing.ReturnDate
-                                           FROM Borrowing
-                                           INNER JOIN 
-                                           Book ON Borrowing.BookID = Book.ID
-                                           INNER JOIN 
-                                           Category ON Book.CategoryID = Category.Id 
-                                           WHERE Borrowing.ReaderId = @readerId;";
+            var booksForReaderIdQuery = @"
+                SELECT 
+                    BookInstance.Id, 
+                    Book.Title, 
+                    BookInstance.Year, 
+                    BookInstance.SerialNumber, 
+                    Book.Author, 
+                    Category.Name AS Category, 
+                    Borrowing.BorrowDate, 
+                    Borrowing.ReturnDate
+                FROM Borrowing
+                INNER JOIN BookInstance ON Borrowing.BookInstanceId = BookInstance.Id
+                INNER JOIN Book ON Book.Id = BookInstance.BookId
+                INNER JOIN Category ON Book.CategoryId = Category.Id 
+                WHERE Borrowing.ReaderId = @readerId 
+                  AND Borrowing.ActualReturnDate IS NULL";
 
-            return _databaseConnection.Connection.Query<BorrowedBookDetailsViewModel>(booksForReaderIdQuery, new { readerId }).ToList();
+            return _databaseConnection.Connection
+                .Query<BorrowedBookDetailsViewModel>(booksForReaderIdQuery, new { readerId })
+                .ToList();
         }
 
         public void Update(BorrowingBook model)
         {
-            throw new NotImplementedException();
+            var updateBorrowBookQuery = @"
+                UPDATE Borrowing 
+                SET ActualReturnDate = @ActualReturnDate
+                WHERE BookInstanceId = @BookInstanceId";
+
+            _databaseConnection.Connection.Execute(updateBorrowBookQuery, model);
         }
     }
 }

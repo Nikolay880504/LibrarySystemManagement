@@ -1,4 +1,6 @@
-﻿namespace LibrarySystemManagement.Models
+﻿using LibrarySystemManagement.Models.Readers;
+
+namespace LibrarySystemManagement.Models.Borrowers
 {
     public class BorrowedBooksViewModel
     {

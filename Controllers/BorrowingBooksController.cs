@@ -1,6 +1,7 @@
 ﻿
 using LibrarySystemManagement.Data;
-using LibrarySystemManagement.Models;
+using LibrarySystemManagement.Models.BookInstances;
+using LibrarySystemManagement.Models.Borrowers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibrarySystemManagement.Controllers
@@ -10,11 +11,13 @@ namespace LibrarySystemManagement.Controllers
     {
         private readonly IBorrowingRepository _borrowingRepository;
         private readonly IBookRepository _bookRepository;
+        private readonly IBookInstanceRepository _bookInstanceRepository;
 
-        public BorrowingBooksController(IBorrowingRepository borrowingRepository, IBookRepository bookRepository)
+        public BorrowingBooksController(IBorrowingRepository borrowingRepository, IBookRepository bookRepository, IBookInstanceRepository bookInstanceRepository)
         {
             _borrowingRepository = borrowingRepository;
             _bookRepository = bookRepository;
+            _bookInstanceRepository = bookInstanceRepository;
         }
 
         [HttpGet("listBorrowingBooks")]
@@ -34,29 +37,37 @@ namespace LibrarySystemManagement.Controllers
         [HttpGet("borrow_book/{id}")]
         public IActionResult BorrowBooksForm(int id)
         {
-            var books = _bookRepository.GetAllBooks().ToList();
-            var borrowingViewModel = new FreeBooksViewModel
+            var instancesForRents = new List<BookInstancesForRent>();
+            var books = _bookRepository.GetBooksWithCategories().ToList();
+            
+            foreach (var book in books)
             {
-                ReaderId = id,
-                Books = books
-            };
-            return View(borrowingViewModel);
+                var bookInstancesForRent = new BookInstancesForRent
+                {
+                    Model = book,
+                    BookInstances = _bookInstanceRepository.GetAllBookInstancesForBookId(book.Id),
+                    ReaderId = id
+                };
+                instancesForRents.Add(bookInstancesForRent);
+            }
+
+            return View(instancesForRents);
         }
 
-        [HttpPost("book/{bookId}/reader/{readerId}")]
-        public IActionResult RentBookUserById(int bookId, int readerId)
+        [HttpPost("book/{bookInstanceId}/reader/{readerId}")]
+        public IActionResult RentBookInstanceUserById(int bookInstanceId, int readerId)
         {
-            var book = _bookRepository.Get(bookId);
-            if (book == null)
+            var bookInstance = _bookInstanceRepository.Get(bookInstanceId);
+            if (bookInstance == null)
             {
-                ModelState.AddModelError("", "Book not found.");
+                ModelState.AddModelError("", "Book instance not found.");
                 return RedirectToAction("BorrowBooksForm", new { id = readerId });
             }
 
             var borrowingBook = new BorrowingBook
             {
-                BookID = bookId,
-                ReaderID = readerId,
+                BookInstanceId = bookInstanceId,
+                ReaderId = readerId,
                 BorrowDate = DateTime.Now,
                 ReturnDate = DateTime.Now.AddMonths(1)
             };
@@ -65,6 +76,22 @@ namespace LibrarySystemManagement.Controllers
 
             return RedirectToAction("ReaderCart", "Readers", new { id = readerId });
         }
+
+        [HttpPost("updateReturnDate/reader/{readerId}/book/{bookId}")]
+        public IActionResult UpdateActualReturnDateBook(int readerId, int bookId)
+        {
+            var borrowBook = _borrowingRepository.Get(bookId);
+            if (borrowBook != null)
+            {
+                borrowBook.ActualReturnDate = DateTime.Now;
+                _borrowingRepository.Update(borrowBook);
+            }
+            else
+            {
+                ModelState.AddModelError("", "Borrowing record not found.");
+            }
+
+            return RedirectToAction("ReaderCart", "Readers", new { id = readerId });
+        }
     }
 }
-

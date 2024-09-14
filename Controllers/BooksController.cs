@@ -1,8 +1,7 @@
 ﻿using LibrarySystemManagement.Data;
-using LibrarySystemManagement.Models;
+using LibrarySystemManagement.Models.Books;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Net;
 
 namespace LibrarySystemManagement.Controllers
 {
@@ -17,12 +16,14 @@ namespace LibrarySystemManagement.Controllers
             _bookRepository = bookRepository;
             _categoryRepository = categoryRepository;
         }
-
+        public IActionResult GetPopularBooks() { 
+            
+            var listPopularBooks = _bookRepository.GetListMostPopularBooks();
+            return View(listPopularBooks); }
         [HttpGet("listBooks")]
         public IActionResult GetListBooks()
         {
-            var listBooks = _bookRepository.GetAllBooks();
-
+            var listBooks = _bookRepository.GetBooksWithCategories();
             return View(listBooks);
         }
 
@@ -30,7 +31,7 @@ namespace LibrarySystemManagement.Controllers
         public IActionResult BookForm(int? id)
         {
             var listCategories = _categoryRepository.GetAllCategories();
-            var viewModel = new BookFormViewModelWithCategories()
+            var viewModel = new BookFormViewModelWithCategories
             {
                 Categories = new SelectList(listCategories, "Id", "Name")
             };
@@ -58,7 +59,7 @@ namespace LibrarySystemManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                var book = new Book()
+                var book = new Book
                 {
                     Author = form.Author,
                     Title = form.Title,
@@ -67,6 +68,7 @@ namespace LibrarySystemManagement.Controllers
                 _bookRepository.Add(book);
                 return RedirectToAction("GetListBooks");
             }
+
             var listCategories = _categoryRepository.GetAllCategories();
             var viewModel = new BookFormViewModelWithCategories
             {
@@ -75,8 +77,6 @@ namespace LibrarySystemManagement.Controllers
             };
             return View("BookForm", viewModel);
         }
-
-
 
         [HttpPost("book/delete/{id}")]
         public IActionResult DeleteBook(int id)
@@ -88,26 +88,26 @@ namespace LibrarySystemManagement.Controllers
         [HttpPost("book/update")]
         public IActionResult UpdateBook(BookFormViewModel form)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var listCategories = _categoryRepository.GetAllCategories();
-                var viewModel = new BookFormViewModelWithCategories
+                var bookForUpdate = _bookRepository.Get(form.Id);
+                if (bookForUpdate != null)
                 {
-                    Form = form,
-                    Categories = new SelectList(listCategories, "Id", "Name")
-                };
-                return View("BookForm", viewModel);
+                    bookForUpdate.Author = form.Author;
+                    bookForUpdate.Title = form.Title;
+                    bookForUpdate.CategoryId = form.CategoryId;
+                    _bookRepository.Update(bookForUpdate);
+                }
+                return RedirectToAction("GetListBooks");
             }
 
-            var bookForUpdate = _bookRepository.Get(form.Id);
-            if (bookForUpdate != null)
+            var listCategories = _categoryRepository.GetAllCategories();
+            var viewModel = new BookFormViewModelWithCategories
             {
-                bookForUpdate.Author = form.Author;
-                bookForUpdate.Title = form.Title;
-                bookForUpdate.CategoryId = form.CategoryId;
-                _bookRepository.Update(bookForUpdate);
-            }
-            return RedirectToAction("GetListBooks");
+                Form = form,
+                Categories = new SelectList(listCategories, "Id", "Name")
+            };
+            return View("BookForm", viewModel);
         }
     }
 }
