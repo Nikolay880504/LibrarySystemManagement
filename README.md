@@ -1,1 +1,1 @@
-This small library management tutorial project is written primarily to teach writing SQL queries and working with tables.
+This small library management educational project is written primarily to learn how to write  SQL queries and work with tables.
